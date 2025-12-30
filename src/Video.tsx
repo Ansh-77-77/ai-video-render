@@ -1,112 +1,165 @@
-import { AbsoluteFill, Composition, interpolate, useCurrentFrame } from "remotion";
+import React from 'react';
+import {
+AbsoluteFill,
+Composition,
+interpolate,
+useCurrentFrame,
+useVideoConfig,
+Easing,
+} from 'remotion';
 
-const Scene1 = () => {
-  const frame = useCurrentFrame();
+const CyberScene: React.FC = () => {
+const frame = useCurrentFrame();
+const { width, height, fps } = useVideoConfig();
 
-  const headlineOpacity = interpolate(frame, [0, 30], [0, 1], {
-    extrapolateRight: "clamp",
-  });
+```
+const opacity = interpolate(frame, [0, 15, 135, 150], [0, 1, 1, 0]);
+const scale = interpolate(frame, [0, 150], [1, 1.1], {
+	extrapolateRight: 'clamp',
+});
 
-  const headlineScale = interpolate(frame, [0, 30], [0.95, 1], {
-    extrapolateRight: "clamp",
-  });
+const scanlinePos = interpolate(frame % 40, [0, 40], [0, height]);
 
-  const subtitleOpacity = interpolate(frame, [25, 55], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+const text1Opacity = interpolate(frame, [10, 25, 65, 75], [0, 1, 1, 0]);
+const text1Y = interpolate(frame, [10, 25], [20, 0], {
+	extrapolateRight: 'clamp',
+});
 
-  const subtitleScale = interpolate(frame, [25, 55], [0.95, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+const text2Opacity = interpolate(frame, [75, 90, 135, 145], [0, 1, 1, 0]);
+const text2Y = interpolate(frame, [75, 90], [20, 0], {
+	extrapolateRight: 'clamp',
+});
 
-  return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: "#0f172a",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "0 80px",
-        }}
-      >
-        <div
-          style={{
-            opacity: headlineOpacity,
-            transform: `scale(${headlineScale})`,
-          }}
-        >
-          <h1
-            style={{
-              fontSize: 82,
-              fontWeight: 700,
-              color: "#ffffff",
-              textAlign: "center",
-              letterSpacing: "-0.03em",
-              lineHeight: 1.15,
-              margin: 0,
-              textShadow: "0 0 60px rgba(99, 102, 241, 0.4), 0 0 120px rgba(99, 102, 241, 0.2)",
-            }}
-          >
-            HOW HACKERS
-            <br />
-            STEAL PASSWORDS
-          </h1>
-        </div>
-        <div
-          style={{
-            opacity: subtitleOpacity,
-            transform: `scale(${subtitleScale})`,
-            marginTop: 48,
-          }}
-        >
-          <p
-            style={{
-              fontSize: 38,
-              fontWeight: 400,
-              color: "rgba(255, 255, 255, 0.6)",
-              textAlign: "center",
-              margin: 0,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            Most people never notice this
-          </p>
-        </div>
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "radial-gradient(ellipse at 50% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 60%)",
-          pointerEvents: "none",
-        }}
-      />
-    </AbsoluteFill>
-  );
+const glowIntensity = interpolate(
+	Math.sin(frame / 10),
+	[-1, 1],
+	[10, 25]
+);
+
+return (
+	<AbsoluteFill
+		style={{
+			backgroundColor: '#020617',
+			fontFamily: 'system-ui, -apple-system, sans-serif',
+			color: 'white',
+			overflow: 'hidden',
+		}}
+	>
+		{/* Background Grid */}
+		<AbsoluteFill
+			style={{
+				backgroundImage: `linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)`,
+				backgroundSize: '80px 80px',
+				opacity: 0.2,
+				transform: `scale(${scale})`,
+			}}
+		/>
+
+		{/* Scanline Effect */}
+		<div
+			style={{
+				position: 'absolute',
+				top: scanlinePos,
+				width: '100%',
+				height: '2px',
+				background: 'rgba(34, 197, 94, 0.3)',
+				boxShadow: '0 0 15px #22c55e',
+			}}
+		/>
+
+		<AbsoluteFill
+			style={{
+				justifyContent: 'center',
+				alignItems: 'center',
+				padding: '0 80px',
+				textAlign: 'center',
+				opacity,
+			}}
+		>
+			{/* Scene 1: The Hook */}
+			<div
+				style={{
+					position: 'absolute',
+					opacity: text1Opacity,
+					transform: `translateY(${text1Y}px)`,
+				}}
+			>
+				<h1
+					style={{
+						fontSize: '90px',
+						fontWeight: 900,
+						lineHeight: 1.1,
+						letterSpacing: '-0.05em',
+						textTransform: 'uppercase',
+						textShadow: `0 0 ${glowIntensity}px rgba(255, 255, 255, 0.5)`,
+					}}
+				>
+					YOUR PASSWORDS <br />
+					<span style={{ color: '#ef4444' }}>ARE NOT SAFE</span>
+				</h1>
+			</div>
+
+			{/* Scene 2: The Method */}
+			<div
+				style={{
+					position: 'absolute',
+					opacity: text2Opacity,
+					transform: `translateY(${text2Y}px)`,
+				}}
+			>
+				<p
+					style={{
+						fontSize: '48px',
+						fontWeight: 500,
+						color: '#94a3b8',
+						marginBottom: '20px',
+						textTransform: 'uppercase',
+						letterSpacing: '0.2em',
+					}}
+				>
+					THE HACKER METHOD
+				</p>
+				<h2
+					style={{
+						fontSize: '80px',
+						fontWeight: 800,
+						lineHeight: 1.2,
+					}}
+				>
+					BRUTE FORCE <br />
+					& PHISHING <br />
+					<span style={{ color: '#22c55e', fontFamily: 'monospace' }}>
+						EXPOSED_
+					</span>
+				</h2>
+			</div>
+		</AbsoluteFill>
+
+		{/* Vignette */}
+		<AbsoluteFill
+			style={{
+				boxShadow: 'inset 0 0 300px rgba(0,0,0,0.8)',
+				pointerEvents: 'none',
+			}}
+		/>
+	</AbsoluteFill>
+);
+
+```
+
 };
 
-export const RemotionRoot = () => {
-  return (
-    <Composition
-      id="Video"
-      component={Scene1}
-      durationInFrames={150}
-      fps={30}
-      width={1080}
-      height={1920}
-    />
-  );
+export const Video: React.FC = () => {
+return (
+<>
+<Composition
+id="Video"
+component={CyberScene}
+durationInFrames={150}
+fps={30}
+width={1080}
+height={1920}
+/>
+</>
+);
 };

@@ -21,7 +21,7 @@ jobs:
       - name: Render video
         run: npm run render
 
-      - name: Upload output
+      - name: Upload rendered video
         uses: actions/upload-artifact@v4
         with:
           name: rendered-video

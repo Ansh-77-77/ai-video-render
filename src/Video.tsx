@@ -5,18 +5,14 @@ Composition,
 interpolate,
 useCurrentFrame,
 useVideoConfig,
-Easing,
 } from 'remotion';
 
 const CyberScene: React.FC = () => {
 const frame = useCurrentFrame();
-const { width, height, fps } = useVideoConfig();
+const { width, height } = useVideoConfig();
 
-```
 const opacity = interpolate(frame, [0, 15, 135, 150], [0, 1, 1, 0]);
-const scale = interpolate(frame, [0, 150], [1, 1.1], {
-	extrapolateRight: 'clamp',
-});
+const scale = interpolate(frame, [0, 150], [1, 1.1]);
 
 const scanlinePos = interpolate(frame % 40, [0, 40], [0, height]);
 
@@ -36,6 +32,13 @@ const glowIntensity = interpolate(
 	[10, 25]
 );
 
+const gridStyle: React.CSSProperties = {
+	backgroundImage: 'linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)',
+	backgroundSize: '80px 80px',
+	opacity: 0.2,
+	transform: `scale(${scale})`,
+};
+
 return (
 	<AbsoluteFill
 		style={{
@@ -45,25 +48,17 @@ return (
 			overflow: 'hidden',
 		}}
 	>
-		{/* Background Grid */}
-		<AbsoluteFill
-			style={{
-				backgroundImage: `linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)`,
-				backgroundSize: '80px 80px',
-				opacity: 0.2,
-				transform: `scale(${scale})`,
-			}}
-		/>
+		<AbsoluteFill style={gridStyle} />
 
-		{/* Scanline Effect */}
 		<div
 			style={{
 				position: 'absolute',
 				top: scanlinePos,
 				width: '100%',
 				height: '2px',
-				background: 'rgba(34, 197, 94, 0.3)',
+				background: '#22c55e',
 				boxShadow: '0 0 15px #22c55e',
+				opacity: 0.3,
 			}}
 		/>
 
@@ -76,7 +71,6 @@ return (
 				opacity,
 			}}
 		>
-			{/* Scene 1: The Hook */}
 			<div
 				style={{
 					position: 'absolute',
@@ -99,7 +93,6 @@ return (
 				</h1>
 			</div>
 
-			{/* Scene 2: The Method */}
 			<div
 				style={{
 					position: 'absolute',
@@ -135,7 +128,6 @@ return (
 			</div>
 		</AbsoluteFill>
 
-		{/* Vignette */}
 		<AbsoluteFill
 			style={{
 				boxShadow: 'inset 0 0 300px rgba(0,0,0,0.8)',
@@ -145,13 +137,11 @@ return (
 	</AbsoluteFill>
 );
 
-```
 
 };
 
 export const Video: React.FC = () => {
 return (
-<>
 <Composition
 id="Video"
 component={CyberScene}
@@ -160,6 +150,5 @@ fps={30}
 width={1080}
 height={1920}
 />
-</>
 );
 };
